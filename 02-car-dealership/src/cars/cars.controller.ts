@@ -40,7 +40,7 @@ export class CarsController {
     @Body() updateCarDto: UpdateCarDto,
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    console.log({ updateCarDto });
+    this.carsService.update(id, updateCarDto);
     return { body: updateCarDto, id };
   }
 

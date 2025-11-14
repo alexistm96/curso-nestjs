@@ -44,5 +44,22 @@ export class CarsService {
     return newCar;
   }
 
-  update(id: string, updateCarDto: UpdateCarDto) {}
+  update(id: string, updateCarDto: UpdateCarDto) {
+    let foundCar = this.findOne(id);
+    this.cars = this.cars.map((car) => {
+      if (car.id === id) {
+        foundCar = {
+          ...foundCar,
+          ...updateCarDto,
+          id,
+        };
+        console.log({ foundCar });
+        return foundCar;
+      }
+
+      return car;
+    });
+
+    return foundCar;
+  }
 }
