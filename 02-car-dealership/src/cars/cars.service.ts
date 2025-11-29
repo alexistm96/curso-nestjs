@@ -62,4 +62,11 @@ export class CarsService {
 
     return foundCar;
   }
+
+  delete(id: string) {
+    const carToDelete = this.findOne(id);
+
+    this.cars = this.cars.filter((car) => car.id !== id);
+    return;
+  }
 }
