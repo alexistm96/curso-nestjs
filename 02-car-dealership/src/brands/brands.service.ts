@@ -7,11 +7,11 @@ import { randomUUID as uuid } from 'crypto';
 @Injectable()
 export class BrandsService {
   private brands: Brand[] = [
-    {
-      id: uuid(),
-      name: 'Toyota',
-      createdAt: new Date().getTime(),
-    },
+    // {
+    //   id: uuid(),
+    //   name: 'Toyota',
+    //   createdAt: new Date().getTime(),
+    // },
   ];
 
   create(createBrandDto: CreateBrandDto) {
