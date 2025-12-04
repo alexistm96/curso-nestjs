@@ -53,7 +53,8 @@ export class ProductsService {
     } else {
       const queryBuilder = this.productRepository.createQueryBuilder();
       product = await queryBuilder
-        .where(`lower(title)=:title or slug=:slug`, {
+        .where(`LOWER(title)=:title or slug=:slug`, {
+          // LOWER funcion de postgres para hacer lowercase
           title: term.toLowerCase(),
           slug: term,
         })
@@ -66,8 +67,21 @@ export class ProductsService {
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.productRepository.preload({
+      id: id,
+      ...updateProductDto,
+    });
+
+    if (!product)
+      throw new NotFoundException(`Product with id ${id} not found`);
+
+    try {
+      await this.productRepository.save(product);
+      return product;
+    } catch (error) {
+      return this.handleExceptions(error);
+    }
   }
 
   async remove(id: string) {
