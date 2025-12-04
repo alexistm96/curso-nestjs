@@ -33,7 +33,7 @@ export class ProductsService {
   }
 
   findAll(paginationDto: PaginationDto) {
-    const { limit = 0, offset = 0 } = paginationDto;
+    const { limit = 10, offset = 0 } = paginationDto;
     const products = this.productRepository.find({
       take: limit,
       skip: offset,
@@ -42,10 +42,21 @@ export class ProductsService {
     return products;
   }
 
-  async findOne(id: string) {
-    const product = await this.productRepository.findOneBy({ id: Equal(id) });
+  async findOne(term: string) {
+    const regex =
+      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/i;
+    const isUUID = regex.test(term);
+    let product: Product | null;
+
+    if (isUUID) {
+      product = await this.productRepository.findOneBy({ id: term });
+    } else {
+      product = await this.productRepository.findOneBy({ slug: term });
+    }
+
     if (!product)
-      throw new NotFoundException(`Product with id ${id} not found.`);
+      throw new NotFoundException(`Product with id ${term} not found.`);
+
     return product;
   }
 
