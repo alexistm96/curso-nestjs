@@ -8,7 +8,7 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
@@ -51,7 +51,13 @@ export class ProductsService {
     if (isUUID) {
       product = await this.productRepository.findOneBy({ id: term });
     } else {
-      product = await this.productRepository.findOneBy({ slug: term });
+      const queryBuilder = this.productRepository.createQueryBuilder();
+      product = await queryBuilder
+        .where(`lower(title)=:title or slug=:slug`, {
+          title: term.toLowerCase(),
+          slug: term,
+        })
+        .getOne();
     }
 
     if (!product)
